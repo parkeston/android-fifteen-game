@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recyclergame.adapter.GameAdapter;
 import com.example.recyclergame.helper.GameItemTouchHelper;
-import com.example.recyclergame.helper.OnDragListener;
+import com.example.recyclergame.helper.GameManager;
 
-public class MainActivity extends AppCompatActivity implements OnDragListener {
+public class MainActivity extends AppCompatActivity implements GameManager {
 
     private ItemTouchHelper touchHelper;
     private Toolbar toolbar;
@@ -61,18 +61,18 @@ public class MainActivity extends AppCompatActivity implements OnDragListener {
     }
 
     @Override
-    public void onDrag() {
+    public void onStepCompleted() {
         stepsCounter++;
         stepsText.setText(String.valueOf(stepsCounter));
     }
 
     @Override
-    public void onShuffle() {
+    public void onGameRestart() {
         stepsText.setText("0");
         stepsCounter = 0;
     }
 
     public void gameRestart(MenuItem item) {
-        adapter.shuffle();
+        adapter.restart();
     }
 }

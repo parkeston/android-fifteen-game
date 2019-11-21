@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recyclergame.R;
-import com.example.recyclergame.helper.OnDragListener;
+import com.example.recyclergame.helper.GameManager;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -22,14 +22,14 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameVH> implem
 
     private ArrayList<Bitmap> data;
     private ArrayList<Bitmap> winScenario;
-    private OnDragListener startDragListener;
+    private GameManager gameManager;
 
     private Snackbar winBar;
     private int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
 
 
-    public GameAdapter(OnDragListener startDragListener, ArrayList<Bitmap> data) {
-        this.startDragListener = startDragListener;
+    public GameAdapter(GameManager gameManager, ArrayList<Bitmap> data) {
+        this.gameManager = gameManager;
         this.data = data;
         winScenario = new ArrayList<>(data);
         Collections.shuffle(this.data);
@@ -37,8 +37,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameVH> implem
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        startDragListener.onDrag();
-
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
                 Collections.swap(data, i, i + 1);
@@ -55,6 +53,16 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameVH> implem
     public void onItemDismiss(int position) {
         data.remove(position);
         notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onClearView() {
+        gameManager.onStepCompleted();
+
+        if (data.equals(winScenario)) {
+            winBar.show();
+            dragFlags = 0;
+        }
     }
 
 
@@ -74,7 +82,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameVH> implem
             public boolean onTouch(View v, MotionEvent event) {
 
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    startDragListener.onStartDrag(holder);
+                    gameManager.onStartDrag(holder);
                 }
 
                 return false;
@@ -87,12 +95,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameVH> implem
     @Override
     public void onBindViewHolder(@NonNull final GameVH holder, int position) {
         holder.SetData(data.get(position));
-
-        System.out.println("bind view");
-        if (data.equals(winScenario)) {
-            winBar.show();
-            dragFlags = 0;
-        }
     }
 
     @Override
@@ -109,17 +111,16 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameVH> implem
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 super.onDismissed(transientBottomBar, event);
-                shuffle();
+                restart();
             }
         });
     }
 
-    public void shuffle() {
+    public void restart() {
         Collections.shuffle(this.data);
-
         notifyDataSetChanged();
 
-        startDragListener.onShuffle();
+        gameManager.onGameRestart();
         dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
     }
 

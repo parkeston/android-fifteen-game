@@ -46,5 +46,10 @@ public class GameItemTouchHelper extends ItemTouchHelper.Callback {
         adapter.onItemDismiss(viewHolder.getAdapterPosition());
     }
 
+    @Override
+    public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+        super.clearView(recyclerView, viewHolder);
 
+        adapter.onClearView();
+    }
 }

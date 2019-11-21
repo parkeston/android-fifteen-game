@@ -2,11 +2,11 @@ package com.example.recyclergame.helper;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-public interface OnDragListener {
+public interface GameManager {
 
     void onStartDrag(RecyclerView.ViewHolder viewHolder);
 
-    void onDrag();
+    void onStepCompleted();
 
-    void onShuffle();
+    void onGameRestart();
 }
