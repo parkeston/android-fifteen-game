@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FifteenGame</string>
+    <string name="steps">Steps</string>
+    <string name="restart">Restart</string>
+</resources>

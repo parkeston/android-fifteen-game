@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/stepsCounterMenuItem"
+        android:title="@string/steps"
+        app:actionLayout="@layout/steps_layout"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/restartButton"
+        android:icon="@drawable/restart"
+        android:onClick="gameRestart"
+        android:title="@string/restart"
+        app:showAsAction="ifRoom" />
+</menu>
