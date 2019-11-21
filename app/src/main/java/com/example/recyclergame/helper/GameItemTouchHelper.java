@@ -27,7 +27,7 @@ public class GameItemTouchHelper extends ItemTouchHelper.Callback {
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
 
-        int dragFlags = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+        int dragFlags = adapter.getDragFlags();
         int swipeFlags = 0;
 
         return makeMovementFlags(dragFlags, swipeFlags);
