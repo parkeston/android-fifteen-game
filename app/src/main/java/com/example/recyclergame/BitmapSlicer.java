@@ -12,7 +12,6 @@ public class BitmapSlicer {
         Bitmap bitmapToSlice = BitmapFactory.decodeResource(context.getResources(), drawableId);
 
         ArrayList<Bitmap> bitmapSlices = new ArrayList<>();
-        slices *= slices;
 
         int height = bitmapToSlice.getHeight() / slices;
         int width = bitmapToSlice.getWidth();

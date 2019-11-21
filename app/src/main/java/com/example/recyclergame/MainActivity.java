@@ -1,6 +1,5 @@
 package com.example.recyclergame;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,19 +14,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.recyclergame.adapter.GameAdapter;
 import com.example.recyclergame.helper.GameItemTouchHelper;
 import com.example.recyclergame.helper.OnDragListener;
-import com.example.recyclergame.utils.GridMapper;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements OnDragListener {
 
     private ItemTouchHelper touchHelper;
     private Toolbar toolbar;
     private GameAdapter adapter;
-    private ArrayList<Bitmap> data;
 
     private int stepsCounter;
     private TextView stepsText;
+
+    private final int slicesCount = 9;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +36,9 @@ public class MainActivity extends AppCompatActivity implements OnDragListener {
 
         RecyclerView recyclerView = findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setLayoutManager(new SpanningLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        adapter = new GameAdapter(this, BitmapSlicer.Slice(this, R.drawable.android, GridMapper.GRIDSIZE));
+        adapter = new GameAdapter(this, BitmapSlicer.Slice(this, R.drawable.octocat, slicesCount));
         recyclerView.setAdapter(adapter);
 
         ItemTouchHelper.Callback callback = new GameItemTouchHelper(adapter);
@@ -57,17 +54,6 @@ public class MainActivity extends AppCompatActivity implements OnDragListener {
         stepsText.setText("0");
         return true;
     }
-
-//    private ArrayList<Bitmap> generateAdapterDataSet(int gridSize)
-//    {
-//        data = new ArrayList<>();
-//        for (int i = 0; i<gridSize*gridSize-1;i++)
-//        {
-//            data.add(i+1);
-//        }
-//
-//        return  data;
-//    }
 
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
@@ -87,8 +73,6 @@ public class MainActivity extends AppCompatActivity implements OnDragListener {
     }
 
     public void gameRestart(MenuItem item) {
-        adapter.shuffle(data);
+        adapter.shuffle();
     }
-
-
 }

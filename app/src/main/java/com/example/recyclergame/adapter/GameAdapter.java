@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recyclergame.R;
 import com.example.recyclergame.helper.OnDragListener;
-import com.example.recyclergame.utils.GridMapper;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -21,31 +20,31 @@ import java.util.Collections;
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameVH> implements ItemTouchHelperAdapter {
 
     private ArrayList<Bitmap> data;
-    private GameVH emptyCell;
     private OnDragListener startDragListener;
 
-    private int winCounter;
     private Snackbar winBar;
 
 
     public GameAdapter(OnDragListener startDragListener, ArrayList<Bitmap> data) {
         this.startDragListener = startDragListener;
-        winCounter = 0;
-
-        this.data = new ArrayList<>(data);
+        this.data = data;
         Collections.shuffle(this.data);
-        this.data.add(null);
     }
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-
         startDragListener.onDrag();
 
-        Collections.swap(data, fromPosition, toPosition);
-        winCounter = 0;
-
-        notifyDataSetChanged();
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(data, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(data, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
     }
 
     @Override
@@ -57,7 +56,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameVH> implem
     @NonNull
     @Override
     public GameVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item, parent, false);
         final GameVH holder = new GameVH((view));
 
@@ -79,18 +77,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameVH> implem
     @Override
     public void onBindViewHolder(@NonNull final GameVH holder, int position) {
         holder.SetData(data.get(position));
-
-        if (holder.isEmpty) {
-            emptyCell = holder;
-        }
-
-//        if(dataPiece!=null && dataPiece == (position+1)) {
-//
-//            winCounter++;
-//
-//            if(winCounter == (data.size()-1))
-//                winBar.show();
-//        }
     }
 
     @Override
@@ -107,19 +93,13 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameVH> implem
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 super.onDismissed(transientBottomBar, event);
-
-                data.remove(data.size() - 1);
-                shuffle(data);
+                shuffle();
             }
         });
     }
 
-    public void shuffle(ArrayList<Bitmap> data) {
-        winCounter = 0;
-
-        this.data = new ArrayList<>(data);
+    public void shuffle() {
         Collections.shuffle(this.data);
-        this.data.add(null);
 
         notifyDataSetChanged();
 
@@ -128,8 +108,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameVH> implem
 
     public class GameVH extends RecyclerView.ViewHolder {
 
-        private boolean isEmpty;
-
         private ImageView image;
 
         public GameVH(@NonNull View itemView) {
@@ -137,22 +115,12 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameVH> implem
             image = itemView.findViewById(R.id.gridItemImage);
         }
 
-        public int getDragFlags() {
-            if (isEmpty)
-                return 0;
-
-            return GridMapper.isNeighbour(getAdapterPosition(), emptyCell.getAdapterPosition());
-        }
-
         public void setStartDragListener(View.OnTouchListener listener) {
             itemView.setOnTouchListener(listener);
         }
 
         public void SetData(Bitmap dataPiece) {
-            if (dataPiece != null)
-                image.setImageBitmap(dataPiece);
-
-            isEmpty = dataPiece == null;
+            image.setImageBitmap(dataPiece);
         }
     }
 }
